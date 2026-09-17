@@ -1,7 +1,9 @@
 import { execSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { tmpdir } from "node:os";
+import { randomUUID } from "node:crypto";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const distClient = join(root, "dist", "client");
@@ -15,8 +17,8 @@ const HTACCESS = [
   "",
 ].join("\n");
 
-function sh(cmd) {
-  execSync(cmd, { cwd: root, stdio: "inherit", shell: true });
+function sh(cmd, cwd = root) {
+  execSync(cmd, { cwd, stdio: "inherit", shell: true });
 }
 
 function hasBranch(name) {
@@ -36,36 +38,48 @@ if (!existsSync(distClient)) {
 
 writeFileSync(join(distClient, ".htaccess"), HTACCESS);
 
-const masterExists = hasBranch(PUBLISH_BRANCH);
+sh("git worktree prune");
+let publishDir = null;
+let firstRun = false;
 
-if (masterExists) {
-  sh(`git switch ${PUBLISH_BRANCH}`);
-  sh("git rm -rf --ignore-unmatch .");
-} else {
+if (!hasBranch(PUBLISH_BRANCH)) {
+  firstRun = true;
   sh(`git switch --orphan ${PUBLISH_BRANCH}`);
-  const sourceFiles = execSync("git ls-tree -r --name-only main", { cwd: root, encoding: "utf8" })
+  const sourceFiles = execSync("git ls-tree -r --name-only main", {
+    cwd: root,
+    encoding: "utf8",
+  })
     .trim()
     .split(/\r?\n/)
     .filter(Boolean);
   for (const f of sourceFiles) {
     rmSync(join(root, f), { force: true, recursive: true });
   }
+  publishDir = root;
+} else {
+  publishDir = join(tmpdir(), "clubstrategy-publish-" + randomUUID().slice(0, 8));
+  sh(`git worktree add ${publishDir} ${PUBLISH_BRANCH}`);
+  sh("git rm -rf --ignore-unmatch .", publishDir);
 }
 
-for (const entry of readdirSync(root)) {
+for (const entry of readdirSync(publishDir)) {
   if (entry === ".git" || entry === "node_modules" || entry === "dist") continue;
-  rmSync(join(root, entry), { force: true, recursive: true });
+  rmSync(join(publishDir, entry), { force: true, recursive: true });
 }
 
-mkdirSync(root, { recursive: true });
-cpSync(distClient, root, { recursive: true });
-writeFileSync(join(root, ".gitignore"), "node_modules\n");
+cpSync(distClient, publishDir, { recursive: true });
+rmSync(join(publishDir, "dist"), { force: true, recursive: true });
+writeFileSync(join(publishDir, ".gitignore"), "node_modules\n");
 
-sh("git add -A");
+sh("git add -A", publishDir);
 
 const date = new Date().toISOString().slice(0, 10);
-sh(`git commit -m "deploy: build estatico (SPA) ${date}"`);
+sh(`git commit -m "deploy: build estatico (SPA) ${date}"`, publishDir);
 
-sh(`git switch main`);
+if (!firstRun) {
+  sh(`git worktree remove ${publishDir} --force`);
+} else {
+  sh(`git switch main`);
+}
 
-console.log("\n[deploy] Branch '" + PUBLISH_BRANCH + "' pronta. Basta dar push.");
+console.log("\n[deploy] Branch '" + PUBLISH_BRANCH + "' com o site pronto. Basta dar push.");
