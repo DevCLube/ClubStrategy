@@ -9,7 +9,7 @@ import {
   LogOut,
   GraduationCap,
 } from "lucide-react";
-import logo from "@/assets/logo-clube.png.asset.json";
+import logo from "@/assets/logo-clube.png";
 import { contarAlunos, useStore, useAcoes } from "@/lib/store";
 import { ICONES_DISPONIVEIS, iconeDe } from "@/lib/icones";
 import { Modal, btnPrimary, inputCls } from "@/components/AlunoDialogs";
@@ -77,7 +77,7 @@ export function AppSidebar() {
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-6 overflow-y-auto border-r border-border bg-card px-4 py-6">
       <div className="flex items-center gap-3">
-        <img src={logo.url} alt="Clube Pirassununga" className="h-11 w-11" />
+        <img src={logo} alt="Clube Pirassununga" className="h-11 w-11" />
         <div className="leading-tight">
           <p className="text-sm font-bold text-foreground">ClubStrategy</p>
           <p className="text-xs text-muted-foreground">Clube Pirassununga</p>

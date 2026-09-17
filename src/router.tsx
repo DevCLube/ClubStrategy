@@ -8,6 +8,7 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
+    basepath: "/clubstrategy",
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });

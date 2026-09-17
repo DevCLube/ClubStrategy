@@ -12,6 +12,9 @@ lerna-debug.log*
 .env.*
 !.env.example
 
+# Artefatos de deploy manual (KingHost File Manager)
+site-clubstrategy.zip
+
 node_modules
 dist
 dist-ssr

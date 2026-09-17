@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, User, Lock, ArrowRight, Download } from "lucide-react";
-import logo from "@/assets/logo-clube.png.asset.json";
+import logo from "@/assets/logo-clube.png";
 import bg from "@/assets/login-bg.jpg";
 import { useAuth } from "@/lib/auth";
 
@@ -96,7 +96,7 @@ export function LoginScreen() {
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 p-1 shadow-md">
             <img
-              src={logo.url}
+              src={logo}
               alt="Clube Pirassununga"
               className="h-full w-full rounded-full object-cover"
             />
