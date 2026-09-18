@@ -94,13 +94,11 @@ export function LoginScreen() {
       <div className="relative z-10 flex w-full shrink-0 flex-col justify-between p-6 sm:p-10 lg:w-[42%] lg:p-12 xl:p-14 bg-[#0c0c0c]">
         {/* Topo: Logo discreto do Clube */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 p-1 shadow-md">
-            <img
-              src={logo}
-              alt="Clube Pirassununga"
-              className="h-full w-full rounded-full object-cover brightness-0 invert"
-            />
-          </div>
+          <img
+            src={logo}
+            alt="Clube Pirassununga"
+            className="h-10 w-10 shrink-0 object-contain brightness-0 invert"
+          />
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-white">
               Clube Pirassununga
