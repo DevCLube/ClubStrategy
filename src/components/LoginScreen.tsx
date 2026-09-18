@@ -98,7 +98,7 @@ export function LoginScreen() {
             <img
               src={logo}
               alt="Clube Pirassununga"
-              className="h-full w-full rounded-full object-cover"
+              className="h-full w-full rounded-full object-cover brightness-0 invert"
             />
           </div>
           <div>
